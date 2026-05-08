@@ -1,15 +1,18 @@
+import os
 import sys
+import pickle
 
-def error_message_detail(error, error_detail: sys):
-    _, _, exc_tb = error_detail.exc_info()
-    file_name = exc_tb.tb_frame.f_code.co_filename
-    error_message = "Error occurred in python script name [{0}] line number [{1}] error message [{2}]".format(
-        file_name, exc_tb.tb_lineno, str(error)
-    )
-    return error_message
+from src.exception import CustomException
 
+def save_object(file_path, obj):
 
-try:
-    a = 10 / 0
-except Exception as e:
-    print(error_message_detail(e, sys))
+    try:
+        dir_path = os.path.dirname(file_path)
+
+        os.makedirs(dir_path, exist_ok=True)
+
+        with open(file_path, "wb") as file_obj:
+            pickle.dump(obj, file_obj)
+
+    except Exception as e:
+        raise CustomException(e, sys)
